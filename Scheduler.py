@@ -250,6 +250,6 @@ def run_simulations_ego_environment(how_many):
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     amount_reps = 100
-    # run_simulations_sm_environment(amount_reps)
+    run_simulations_sm_environment(amount_reps)
 #     run_simulations_altru_environment(amount_reps)
     run_simulations_ego_environment(amount_reps)
