@@ -8,9 +8,10 @@ from enums import *
 
 
 def create_dcops(numAgents,domainSize,density,environment,special_agent_type,special_agent_amount):
+    ans = []
     for dcop_id in range(1,amount_reps+1):
         dcop = DCOP(dcop_id,numAgents,domainSize,density,environment,special_agent_type,special_agent_amount)
-
+        dcop.create_neighbors()
 
 if __name__ == '__main__':
     amount_reps = 100
