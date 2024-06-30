@@ -7,26 +7,31 @@ from enums import *
 
 
 
-def create_dcops(numAgents,domainSize,density,environment,special_agent_type,special_agent_amount):
+def create_dcops(amount_iterations,numAgents,domainSize,density,environment,special_agent_type,special_agent_amount):
     ans = []
     for dcop_id in range(1,amount_reps+1):
-        dcop = DCOP(dcop_id,numAgents,domainSize,density,environment,special_agent_type,special_agent_amount)
+        dcop = DCOP(dcop_id,numAgents,domainSize,density,environment,special_agent_type,special_agent_amount,amount_iterations)
         dcop.create_neighbors()
+        ans.append(dcop)
+    return ans
 
 if __name__ == '__main__':
-    amount_reps = 100
+    amount_reps = 2
+    amount_iterations =1000
     numAgents = 50
     domainSize = 10
-    densities = [0.2, 0.7]
+    densities = [ 0.2]
     environments = list(AgentEnvironment)
     specials = list(AgentSpecial)
-    specials_amount = [1, 2, 10]
+    specials_amount = [1]
 
     for density in densities:
         for environment in environments:
             for special_agent_type in specials:
                 for special_agent_amount in specials_amount:
-                    dcops = create_dcops(numAgents,domainSize,density,environment,special_agent_type,special_agent_amount)
+                    dcops = create_dcops(amount_iterations,numAgents,domainSize,density,environment,special_agent_type,special_agent_amount)
+                    for dcop in dcops:
+                        dcop.initiate_dcop()
 
 
 

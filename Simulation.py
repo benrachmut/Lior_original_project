@@ -1,7 +1,4 @@
-from SociallyMotivatedAgent import SMagent
-from EgoistAgent import EgoistAgent
-from AltruistAgent import AltruistAgent
-from MoralAgentsTypes import SimpleAgent, CarefulAgent, GenerousAgent, SelfishAgent, RandomAgent, CalculatedAgent
+from Agents import *
 import numpy as np
 import random
 from Constraint import UniConstrains
@@ -102,7 +99,7 @@ class SimulationSociallyMotivatedEnvironment(Simulation):
     def create_agents(self):
         for index in range(0, self.numAgents):
             bound = round(random.uniform(0.05, 0.5), 2)
-            self.agents[index] = SMagent(index, self.domainSize, bound)
+            self.agents[index] = SociallyMotivatedAgent(index, self.domainSize, bound)
         return self.agents
 
 

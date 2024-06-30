@@ -30,20 +30,30 @@ class Agent:
         self.phase = 0
         self.iteration = 0
         self.totalIterations = 1000
+        self.init_domain()
 
+        self.is_special = False
     # __________________________________________________________________initiate:
     # neighbours - { key: id, value: neighbour}
-    def init_neighbours(self, neighbours):
-        self.neighbours = neighbours
+
+    def meet_neighbour(self,neighbour_object,constraint_matrix):
+        self.neighbours[neighbour_object.id]=neighbour_object
+        self.constraints[neighbour_object.id]=constraint_matrix
+
+    def init_neighbours(self, neighbours, will_be_used = False):
+        if will_be_used:
+            self.neighbours = neighbours
 
     # constraints - { key: neighbour id, value: matrix}
-    def init_constraints(self, constraints):
-        self.constraints = constraints
+    def init_constraints(self, constraints, will_be_used = False):
+        if will_be_used:
+            self.constraints = constraints
 
     # by domain size
-    def init_domain(self):
-        for i in range(self.domainSize):
-            self.domain.append(i)
+    def init_domain(self, will_be_used = False):
+        if will_be_used:
+            for i in range(self.domainSize):
+                self.domain.append(i)
 
     # _____________________________________________________________________________PRIVET METHODS:
     # _______________________________________________________________message_boxes:
@@ -262,10 +272,8 @@ class AltruistAgent(Agent):
 
         # ______________________________________initiate:
 
-    def initiate(self, neighbours, constraints):
-        self.init_neighbours(neighbours)
-        self.init_constraints(constraints)
-        self.init_domain()
+    def initiate(self):
+
         messages_to_send = self.make_value_messages()
         self.send_messages(messages_to_send)
         self.phase = 1
@@ -396,10 +404,8 @@ class EgoistAgent(Agent):
 
         # ______________________________________initiate:
 
-    def initiate(self, neighbours, constraints):
-        self.init_neighbours(neighbours)
-        self.init_constraints(constraints)
-        self.init_domain()
+    def initiate(self):
+
         messages_to_send = self.make_value_messages()
         self.send_messages(messages_to_send)
         self.phase = 1
@@ -509,10 +515,7 @@ class MoralAgent(Agent):
             self.reply_phase_4()
 
     # ______________________________________initiate:
-    def initiate(self, neighbours, constraints):
-        self.init_neighbours(neighbours)
-        self.init_constraints(constraints)
-        self.init_domain()
+    def initiate(self):
         messages_to_send = self.make_value_messages()
         self.send_messages(messages_to_send)
         self.phase = 1
@@ -1010,10 +1013,7 @@ class SociallyMotivatedAgent(Agent):
 
         # ______________________________________initiate:
 
-    def initiate(self, neighbours, constraints):
-        self.init_neighbours(neighbours)
-        self.init_constraints(constraints)
-        self.init_domain()
+    def initiate(self):
         messages_to_send = self.make_value_messages()
         self.send_messages(messages_to_send)
         self.phase = 1
