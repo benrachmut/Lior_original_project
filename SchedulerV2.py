@@ -15,9 +15,26 @@ def create_dcops(amount_iterations,numAgents,domainSize,density,environment,spec
         ans.append(dcop)
     return ans
 
+
+def calculate_data(dcops,amount_iterations):
+    all_iterations = {}
+    for k in dcops[0].data.keys():
+        all_iterations[k] = {}
+        for i in range(amount_iterations):
+            all_iterations[k][i] = []
+
+    for dcop in dcops:
+        for k,v in dcop.data.items():
+            for iteration,util in v.items():
+                all_iterations[k][iteration].append(util)
+
+
+
+
+
 if __name__ == '__main__':
     amount_reps = 2
-    amount_iterations =1000
+    amount_iterations =100
     numAgents = 50
     domainSize = 10
     densities = [ 0.2]
@@ -32,9 +49,7 @@ if __name__ == '__main__':
                     dcops = create_dcops(amount_iterations,numAgents,domainSize,density,environment,special_agent_type,special_agent_amount)
                     for dcop in dcops:
                         dcop.initiate_dcop()
+                    #static_data = {"density":density,"environment":environment.name,"special agent type":special_agent_type.name}
+                    calculate_data(dcops,amount_iterations)
 
 
-
-    # run_simulations_sm_environment(amount_reps)
-    # run_simulations_altru_environment(amount_reps)
-    #run_simulations_ego_environment(amount_reps)

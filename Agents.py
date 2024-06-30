@@ -18,6 +18,9 @@ class Agent:
         self.neighbours = {}
         self.constraints = {}
         self.domain = []
+
+        self.init_domain()
+
         # -------------------information
         self.alterValue = 0
         self.my_local_change = 0
@@ -30,7 +33,6 @@ class Agent:
         self.phase = 0
         self.iteration = 0
         self.totalIterations = 1000
-        self.init_domain()
 
         self.is_special = False
     # __________________________________________________________________initiate:
@@ -50,10 +52,10 @@ class Agent:
             self.constraints = constraints
 
     # by domain size
-    def init_domain(self, will_be_used = False):
-        if will_be_used:
-            for i in range(self.domainSize):
-                self.domain.append(i)
+    def init_domain(self):
+
+        for i in range(self.domainSize):
+            self.domain.append(i)
 
     # _____________________________________________________________________________PRIVET METHODS:
     # _______________________________________________________________message_boxes:

@@ -6,45 +6,45 @@ from random import Random
 
 
 class Constraint:
-    def __init__(self,D,seed,lower_bound=0,upper_bound=100,):
+    def __init__(self, D, seed, lower_bound=0, upper_bound=100, ):
         self.D = D
         self.lower_bound = lower_bound
         self.upper_bound = upper_bound
         self.cost_rnd = Random(seed)
         self.matrix = self.create_matrix()
-        #self.matrix_transpose = self.create_transpose()
+        # self.matrix_transpose = self.create_transpose()
 
     def create_matrix(self):
         ans = []
         for i in range(self.D):
             row = []
             for j in range(self.D):
-                row.append(self.cost_rnd.randint(self.lower_bound,self.upper_bound))
+                row.append(self.cost_rnd.randint(self.lower_bound, self.upper_bound))
             ans.append(row)
         return ans
 
     def get_matrix(self):
         return copy.deepcopy(self.matrix)
-    #def create_transpose(self):
-        #transpose = []
-        #for i in range(self.D):
-            #row = []
-            #for j in range(self.D):
-                #row.append(self.matrix[j][i])
-            #transpose.append(row)
-        #return transpose
+    # def create_transpose(self):
+    # transpose = []
+    # for i in range(self.D):
+    # row = []
+    # for j in range(self.D):
+    # row.append(self.matrix[j][i])
+    # transpose.append(row)
+    # return transpose
 
+    # def get_matrix_transpose(self):
+    # return copy.deepcopy(self.matrix_transpose)
 
-    #def get_matrix_transpose(self):
-        #return copy.deepcopy(self.matrix_transpose)
 
 class DCOP:
-    def __init__(self,dcop_id,numAgents,domainSize,density,environment,special_agent_type,special_agent_amount,amount_iterations):
-
+    def __init__(self, dcop_id, numAgents, domainSize, density, environment, special_agent_type, special_agent_amount,
+                 amount_iterations):
 
         self.final_iteration = amount_iterations
         self.dcop_id = dcop_id
-        self.rnd_SociallyMotivated_bound = Random((self.dcop_id+5)*17)
+        self.rnd_SociallyMotivated_bound = Random((self.dcop_id + 5) * 17)
 
         self.p1 = density
         self.numAgents = numAgents
@@ -56,21 +56,39 @@ class DCOP:
         self.agents = {}  # { key: id, value: agent}
         self.neighbours = {}  # { key: id, value: all his neighbours}
         self.constraints = {}
+
+        self.agents_special_list = []
+        self.agents_non_special_list = []
+        self.all_agents_list = []
         self.create_agents()
+        self.agents_dict_by_role = {"Global Utility": self.all_agents_list,
+                                    "Unique Agents Utility": self.agents_special_list,
+                                    "Environment Agents Utility": self.agents_non_special_list}
+        self.data = {}
+        self.init_data_dict()
+
+
     def create_agents(self):
+        self.all_agents_list = []
         special_agent_counter = 0
         for agent_id in range(self.numAgents):
-            if special_agent_counter<self.special_agent_amount:
-                self.agents[agent_id] = self.get_special_agent(agent_id)
-                special_agent_counter = special_agent_counter+1
+            if special_agent_counter < self.special_agent_amount:
+                agent = self.get_special_agent(agent_id)
+                self.agents[agent_id] = agent
+                self.agents_special_list.append(agent)
+                special_agent_counter = special_agent_counter + 1
             else:
-                self.agents[agent_id] = self.get_environment_agent(agent_id)
+                agent = self.get_environment_agent(agent_id)
+                self.agents[agent_id] = agent
+                self.agents_non_special_list.append(agent)
 
-    def get_environment_agent(self,agent_id):
+            self.all_agents_list.append(agent)
+
+    def get_environment_agent(self, agent_id):
         ans = None
         if self.environment == AgentEnvironment.socially_motivated:
-            bound = round( self.rnd_SociallyMotivated_bound.uniform(0.05, 0.5), 2)
-            ans =  SociallyMotivatedAgent(agent_id, self.domainSize, bound)
+            bound = round(self.rnd_SociallyMotivated_bound.uniform(0.05, 0.5), 2)
+            ans = SociallyMotivatedAgent(agent_id, self.domainSize, bound)
         if self.environment == AgentEnvironment.altruist:
             ans = AltruistAgent(agent_id, self.domainSize)
         if self.environment == AgentEnvironment.egoist:
@@ -78,7 +96,8 @@ class DCOP:
 
         ans.is_special = False
         return ans
-    def get_special_agent(self,agent_id):
+
+    def get_special_agent(self, agent_id):
         ans = None
         if self.special_agent_type == AgentSpecial.egoist:
             ans = EgoistAgent(agent_id, self.domainSize)
@@ -97,32 +116,31 @@ class DCOP:
         ans.is_special = True
         return ans
 
-
     def create_neighbors(self):
         for agent_id in self.agents.keys():
             self.neighbours[agent_id] = []
-        agents = sorted(self.agents.values(), key= lambda x:x.id)
+        agents = sorted(self.agents.values(), key=lambda x: x.id)
         for i in range(len(agents)):
             a1 = agents[i]
-            for j in range(i+1,len(agents)):
+            for j in range(i + 1, len(agents)):
                 a2 = self.agents[j]
-                rnd_neighbors = Random(((self.dcop_id+1)*110+(a1.id+1)*13+(a2.id+1))*17)
+                rnd_neighbors = Random(((self.dcop_id + 1) * 110 + (a1.id + 1) * 13 + (a2.id + 1)) * 17)
                 rnd_neighbors.random()
-                if rnd_neighbors.uniform(0.0, 1.0)<self.p1:
-                    seed_first = ((self.dcop_id+1)*100+(a1.id+1)*10+(a2.id+1))*177
-                    constraint_1 = Constraint(D=self.domainSize,seed =seed_first).get_matrix()
-                    a1.meet_neighbour(a2,constraint_1)
+                if rnd_neighbors.uniform(0.0, 1.0) < self.p1:
+                    seed_first = ((self.dcop_id + 1) * 100 + (a1.id + 1) * 10 + (a2.id + 1)) * 177
+                    constraint_1 = Constraint(D=self.domainSize, seed=seed_first).get_matrix()
+                    a1.meet_neighbour(a2, constraint_1)
 
                     seed_second = ((self.dcop_id + 1) * 111 + (a1.id + 1) * 17 + (a2.id + 1)) * 1000
                     constraint_2 = Constraint(D=self.domainSize, seed=seed_second).get_matrix()
-                    a2.meet_neighbour(a1,constraint_2)
-
+                    a2.meet_neighbour(a1, constraint_2)
 
     def initiate_dcop(self):
 
         for agent in self.agents.values():
             agent.initiate()
 
+            # agent.init_domain()
         for i in range(self.final_iteration):
             while True:
                 for agent in self.agents.values():
@@ -131,19 +149,19 @@ class DCOP:
                 for agent in self.agents.values():
                     agent.reply()
 
-                    if agent.phase == 4 and agent.is_special:
-                        print(type(agent), i, agent.utility)
                 if agent.phase == 4:
+                    self.record_data(i)
                     break
+        #print("DCOP",self.dcop_id,"is over")
 
+    def record_data(self, i):
 
-                #if agent.phase == 4:
-                    #break
-                    #data.update_data(agent.get_data())  # save data here
-                    #up = True
-            #if up:
-                #i = i + 1
+        for k, v in self.agents_dict_by_role.items():
+            util = 0
+            for agent in v:
+                util = util + agent.utility
+            self.data[k][i] = util
 
-        #print("#################### finished DCOP",self.dcop_id)
-
-        #data.update_best_iteration_data()
+    def init_data_dict(self):
+        for k in self.agents_dict_by_role.keys():
+            self.data[k] = {}
