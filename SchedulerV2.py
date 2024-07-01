@@ -36,14 +36,14 @@ def calculate_data(dcops,amount_iterations,amount_of_agents_dict,static_data,fil
 if __name__ == '__main__':
 
 
-    amount_reps = 2
-    amount_iterations =100
+    amount_reps = 100
+    amount_iterations =1000
     numAgents = 50
     domainSize = 10
-    densities = [0.2]
+    densities = [0.2,0.7]
     environments = list(AgentEnvironment)
     specials = list(AgentSpecial)
-    specials_amount = [1]
+    specials_amount = [0,1,5,10,15,20,25,30,35,40,45,50]
 
     amount_of_agents_dict = {"Global Utility": numAgents,
                              "Unique Agents Utility": None,
