@@ -2,15 +2,15 @@ from enum import Enum
 
 
 class AgentEnvironment(Enum):
-    socially_motivated = 1
-    altruist = 2
-    egoist = 3
+    PC = 1
+    Altruistic = 2
+    Egoistic = 3
 
 class AgentSpecial(Enum):
-    egoist = 1
-    altruist = 2
-    simple = 3
-    careful = 4
-    generous = 5
-    selfish = 6
-    random = 7
+    Egoist = 1
+    Altruist = 2
+    Simple = 3
+    Careful = 4
+    Generous = 5
+    Selfish = 6
+    Random = 7

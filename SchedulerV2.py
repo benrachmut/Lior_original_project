@@ -1,5 +1,7 @@
 from Problems import DCOP
 from enums import *
+from data_functions import *
+import pandas as pd
 
 
 
@@ -16,40 +18,52 @@ def create_dcops(amount_iterations,numAgents,domainSize,density,environment,spec
     return ans
 
 
-def calculate_data(dcops,amount_iterations):
-    all_iterations = {}
-    for k in dcops[0].data.keys():
-        all_iterations[k] = {}
-        for i in range(amount_iterations):
-            all_iterations[k][i] = []
-
-    for dcop in dcops:
-        for k,v in dcop.data.items():
-            for iteration,util in v.items():
-                all_iterations[k][iteration].append(util)
 
 
-
+def calculate_data(dcops,amount_iterations,amount_of_agents_dict,static_data,file_name):
+    cumulative_measures = get_all_utils_per_measure(dcops,amount_iterations)
+    avg_measures = add_avg_per_agent(cumulative_measures,amount_of_agents_dict)
+    measures = {**cumulative_measures,**avg_measures}
+    measures_avg_over_runs = get_average_over_runs(measures)
+    measures_avg_over_runs_reformat = change_format_of_data(measures_avg_over_runs,amount_iterations)
+    format_static_data = get_formatted_static_data(static_data,amount_iterations)
+    ans_dict = {**format_static_data,**measures_avg_over_runs_reformat}
+    df = pd.DataFrame(ans_dict)
+    df.to_csv(file_name+".csv", index=False)
+    return(df)
 
 
 if __name__ == '__main__':
+
+
     amount_reps = 2
     amount_iterations =100
     numAgents = 50
     domainSize = 10
-    densities = [ 0.2]
+    densities = [0.2]
     environments = list(AgentEnvironment)
     specials = list(AgentSpecial)
     specials_amount = [1]
 
+    amount_of_agents_dict = {"Global Utility": numAgents,
+                             "Unique Agents Utility": None,
+                             "Environment Agents Utility": None}
+    dfs = []
     for density in densities:
         for environment in environments:
             for special_agent_type in specials:
                 for special_agent_amount in specials_amount:
+                    amount_of_agents_dict["Unique Agents Utility"]=special_agent_amount
+                    amount_of_agents_dict["Environment Agents Utility"]=numAgents-special_agent_amount
                     dcops = create_dcops(amount_iterations,numAgents,domainSize,density,environment,special_agent_type,special_agent_amount)
-                    for dcop in dcops:
-                        dcop.initiate_dcop()
-                    #static_data = {"density":density,"environment":environment.name,"special agent type":special_agent_type.name}
-                    calculate_data(dcops,amount_iterations)
+                    for dcop in dcops: dcop.initiate_dcop()
+                    file_name = "SM_DCOP_"+str(density)+"_"+environment.name+"_"+special_agent_type.name+"_"+special_agent_amount
+                    static_data = {"Density": density, "Environment": environment.name,
+                                   "Strategy Unique Agent": special_agent_type.name}
+                    df = calculate_data(dcops,amount_iterations,amount_of_agents_dict,static_data,file_name)
+                    dfs.append(df)
+                    df.to_pickle('output.pkl')
+
+
 
 

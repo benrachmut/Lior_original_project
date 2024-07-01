@@ -86,12 +86,12 @@ class DCOP:
 
     def get_environment_agent(self, agent_id):
         ans = None
-        if self.environment == AgentEnvironment.socially_motivated:
+        if self.environment == AgentEnvironment.PC:
             bound = round(self.rnd_SociallyMotivated_bound.uniform(0.05, 0.5), 2)
             ans = SociallyMotivatedAgent(agent_id, self.domainSize, bound)
-        if self.environment == AgentEnvironment.altruist:
+        if self.environment == AgentEnvironment.Altruistic:
             ans = AltruistAgent(agent_id, self.domainSize)
-        if self.environment == AgentEnvironment.egoist:
+        if self.environment == AgentEnvironment.Egoistic:
             ans = EgoistAgent(agent_id, self.domainSize)
 
         ans.is_special = False
@@ -99,19 +99,19 @@ class DCOP:
 
     def get_special_agent(self, agent_id):
         ans = None
-        if self.special_agent_type == AgentSpecial.egoist:
+        if self.special_agent_type == AgentSpecial.Egoist:
             ans = EgoistAgent(agent_id, self.domainSize)
-        if self.special_agent_type == AgentSpecial.altruist:
+        if self.special_agent_type == AgentSpecial.Altruist:
             ans = AltruistAgent(agent_id, self.domainSize)
-        if self.special_agent_type == AgentSpecial.simple:
+        if self.special_agent_type == AgentSpecial.Simple:
             ans = SimpleAgent(agent_id, self.domainSize)
-        if self.special_agent_type == AgentSpecial.careful:
+        if self.special_agent_type == AgentSpecial.Careful:
             ans = CarefulAgent(agent_id, self.domainSize)
-        if self.special_agent_type == AgentSpecial.generous:
+        if self.special_agent_type == AgentSpecial.Generous:
             ans = GenerousAgent(agent_id, self.domainSize)
-        if self.special_agent_type == AgentSpecial.selfish:
+        if self.special_agent_type == AgentSpecial.Selfish:
             ans = SelfishAgent(agent_id, self.domainSize)
-        if self.special_agent_type == AgentSpecial.random:
+        if self.special_agent_type == AgentSpecial.Random:
             ans = RandomAgent(agent_id, self.domainSize)
         ans.is_special = True
         return ans
