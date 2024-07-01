@@ -36,8 +36,8 @@ def calculate_data(dcops,amount_iterations,amount_of_agents_dict,static_data,fil
 if __name__ == '__main__':
 
 
-    amount_reps = 100
-    amount_iterations =1000
+    amount_reps = 2
+    amount_iterations =100
     numAgents = 50
     domainSize = 10
     densities = [0.2,0.7]
@@ -48,7 +48,6 @@ if __name__ == '__main__':
     amount_of_agents_dict = {"Global Utility": numAgents,
                              "Unique Agents Utility": None,
                              "Environment Agents Utility": None}
-    dfs = []
     for density in densities:
         for environment in environments:
             for special_agent_type in specials:
@@ -57,12 +56,12 @@ if __name__ == '__main__':
                     amount_of_agents_dict["Environment Agents Utility"]=numAgents-special_agent_amount
                     dcops = create_dcops(amount_iterations,numAgents,domainSize,density,environment,special_agent_type,special_agent_amount)
                     for dcop in dcops: dcop.initiate_dcop()
-                    file_name = "SM_DCOP_"+str(density)+"_"+environment.name+"_"+special_agent_type.name+"_"+special_agent_amount
+                    file_name = "SM_DCOP_"+str(density)+"_"+environment.name+"_"+special_agent_type.name+"_"+str(special_agent_amount)
                     static_data = {"Density": density, "Environment": environment.name,
                                    "Strategy Unique Agent": special_agent_type.name}
                     df = calculate_data(dcops,amount_iterations,amount_of_agents_dict,static_data,file_name)
-                    dfs.append(df)
-                    df.to_pickle('output.pkl')
+                    df.to_pickle(file_name+".pkl")
+
 
 
 

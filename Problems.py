@@ -142,6 +142,7 @@ class DCOP:
 
             # agent.init_domain()
         for i in range(self.final_iteration):
+            self.record_data(i)
             while True:
                 for agent in self.agents.values():
                     agent.listen()
@@ -150,7 +151,6 @@ class DCOP:
                     agent.reply()
 
                 if agent.phase == 4:
-                    self.record_data(i)
                     break
         #print("DCOP",self.dcop_id,"is over")
 
@@ -159,9 +159,30 @@ class DCOP:
         for k, v in self.agents_dict_by_role.items():
             util = 0
             for agent in v:
-                util = util + agent.utility
+                agent_utility = self.get_agent_util(agent)
+                util = util + agent_utility
             self.data[k][i] = util
 
     def init_data_dict(self):
         for k in self.agents_dict_by_role.keys():
             self.data[k] = {}
+
+    def get_agent_util(self, agent):
+        agent_assignment = agent.assignment
+        neighbours = agent.neighbours
+        neighbors_assignments = self.get_neighbors_assignments(neighbours)
+        constraints = agent.constraints
+        ans = 0
+        for n_id,matrix in constraints.items():
+            neighbors_assignment = neighbors_assignments[n_id]
+            ans = ans+matrix[agent_assignment][neighbors_assignment]
+        return ans
+
+
+    def get_neighbors_assignments(self,neighbours):
+        ans = {}
+        for n_id,obj_ in neighbours.items():
+            ans[n_id]=obj_.assignment
+        return ans
+
+

@@ -21,7 +21,11 @@ def add_avg_per_agent(cumulative_measures, amount_of_agents_dict):
         for iteration, list_of_utils in v.items():
             list_of_avgs = []
             for util in list_of_utils:
-                list_of_avgs.append(util/amount_of_agent)
+                if amount_of_agent !=0:
+                    list_of_avgs.append(util/amount_of_agent)
+                else:
+                    list_of_avgs.append(0)
+
             ans[new_key_name][iteration] = list_of_avgs
     return ans
 
