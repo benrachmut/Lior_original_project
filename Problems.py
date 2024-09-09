@@ -63,7 +63,8 @@ class DCOP:
         self.create_agents()
         self.agents_dict_by_role = {"Global Utility": self.all_agents_list,
                                     "Unique Agents Utility": self.agents_special_list,
-                                    "Environment Agents Utility": self.agents_non_special_list}
+                                    "Environment Agents Utility": self.agents_non_special_list,
+                                    "Cumulative Environment Impact": self.agents_special_list}
         self.data = {}
         self.init_data_dict()
 
@@ -157,11 +158,18 @@ class DCOP:
     def record_data(self, i):
 
         for k, v in self.agents_dict_by_role.items():
-            util = 0
-            for agent in v:
-                agent_utility = self.get_agent_util(agent)
-                util = util + agent_utility
-            self.data[k][i] = util
+            if k == "Cumulative Environment Impact":
+                util = 0
+                for agent in v:
+                    if isinstance(agent,MoralAgent):
+                        util = util + agent.cumulative_environmental_impact
+                self.data[k][i] = util
+            else:
+                util = 0
+                for agent in v:
+                    agent_utility = self.get_agent_util(agent)
+                    util = util + agent_utility
+                self.data[k][i] = util
 
     def init_data_dict(self):
         for k in self.agents_dict_by_role.keys():

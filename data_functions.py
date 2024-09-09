@@ -1,3 +1,6 @@
+import math
+
+
 def get_all_utils_per_measure(dcops,amount_iterations):
     ans = {}
     for k in dcops[0].data.keys():
@@ -34,8 +37,18 @@ def get_average_over_runs(measures):
     ans = {}
     for measure_name,utils_per_iterations_dict in measures.items():
         ans[measure_name]={}
+        ans[measure_name+"_std"] = {}
+        ans[measure_name+"_variance"] = {}
+
         for iteration, to_use_in_mean in utils_per_iterations_dict.items():
-            ans[measure_name][iteration] = sum(to_use_in_mean) / len(to_use_in_mean)
+            mean_ = sum(to_use_in_mean) / len(to_use_in_mean)
+            ans[measure_name][iteration] = mean_
+            variance = sum((x - mean_) ** 2 for x in to_use_in_mean) / len(to_use_in_mean)  # Calculate variance
+            ans[measure_name + "_variance"][iteration] = variance
+
+            ans[measure_name+"_std"][iteration] = math.sqrt(variance)
+
+
 
             #    ans[measure_name][iteration] = 0
 
