@@ -52,19 +52,24 @@ class DCOP:
         self.environment = environment
         self.special_agent_type = special_agent_type
         self.special_agent_amount = special_agent_amount
+        self.special_id = []
         # _________________________________creations
         self.agents = {}  # { key: id, value: agent}
         self.neighbours = {}  # { key: id, value: all his neighbours}
         self.constraints = {}
+        self.connected_to_special_id_dict = {}
 
         self.agents_special_list = []
         self.agents_non_special_list = []
         self.all_agents_list = []
+        self.connected_to_special = []
         self.create_agents()
         self.agents_dict_by_role = {"Global Utility": self.all_agents_list,
                                     "Unique Agents Utility": self.agents_special_list,
-                                    "Environment Agents Utility": self.agents_non_special_list,
-                                    "Cumulative Environment Impact": self.agents_special_list}
+                                    "Cumulative Environment Impact": self.agents_special_list,
+                                    "Environment Agents Utility":None}
+
+
         self.data = {}
         self.init_data_dict()
 
@@ -72,18 +77,24 @@ class DCOP:
     def create_agents(self):
         self.all_agents_list = []
         special_agent_counter = 0
+        self.special_id = []
         for agent_id in range(self.numAgents):
             if special_agent_counter < self.special_agent_amount:
                 agent = self.get_special_agent(agent_id)
                 self.agents[agent_id] = agent
                 self.agents_special_list.append(agent)
                 special_agent_counter = special_agent_counter + 1
+                self.special_id.append(agent_id)
             else:
                 agent = self.get_environment_agent(agent_id)
                 self.agents[agent_id] = agent
                 self.agents_non_special_list.append(agent)
-
             self.all_agents_list.append(agent)
+
+
+        #need to create connected_to_special_id
+
+
 
     def get_environment_agent(self, agent_id):
         ans = None
@@ -192,5 +203,13 @@ class DCOP:
         for n_id,obj_ in neighbours.items():
             ans[n_id]=obj_.assignment
         return ans
+
+    def create_special_agent_neighbor_list(self):
+
+        for agent in self.agents_special_list:
+            neighbours = agent.neighbours
+            for n_id,n in neighbours.items():
+                if n_id not in self.special_id:
+                    self.connected_to_special_id_dict[n_id]=n
 
 
