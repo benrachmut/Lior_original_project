@@ -67,7 +67,9 @@ class DCOP:
         self.agents_dict_by_role = {"Global Utility": self.all_agents_list,
                                     "Unique Agents Utility": self.agents_special_list,
                                     "Cumulative Environment Impact": self.agents_special_list,
-                                    "Environment Agents Utility":None}
+                                    "Current Environment Impact": self.agents_special_list,
+                                    "Environment Agents Utility":None,
+                                    "Environment Agents Utility Average": None}
 
 
         self.data = {}
@@ -147,6 +149,8 @@ class DCOP:
                     constraint_2 = Constraint(D=self.domainSize, seed=seed_second).get_matrix()
                     a2.meet_neighbour(a1, constraint_2)
 
+
+
     def initiate_dcop(self):
 
         for agent in self.agents.values():
@@ -155,26 +159,48 @@ class DCOP:
             # agent.init_domain()
         for i in range(self.final_iteration):
             self.record_data(i)
+
+            for agent in self.agents.values():
+                agent.save_prev_assignment()
+
             while True:
                 for agent in self.agents.values():
                     agent.listen()
+
 
                 for agent in self.agents.values():
                     agent.reply()
 
                 if agent.phase == 4:
+                    agent.update_social_score()
                     break
+            for agent in self.agents.values():
+                agent.update_social_score()
         #print("DCOP",self.dcop_id,"is over")
 
     def record_data(self, i):
 
         for k, v in self.agents_dict_by_role.items():
-            if k == "Cumulative Environment Impact":
+
+            if k == "Environment Agents Utility Average":
                 util = 0
                 for agent in v:
-                    if isinstance(agent,MoralAgent):
-                        util = util + agent.cumulative_environmental_impact
+                    agent_utility = self.get_agent_util(agent)
+                    util = util + agent_utility
+                self.data[k][i] = util/len(self.agents_dict_by_role["Environment Agents Utility Average"])
+
+            elif k == "Cumulative Environment Impact":
+                util = 0
+                for agent in v:
+                    util = util + agent.cum_social_status
                 self.data[k][i] = util
+
+            elif k == "Current Environment Impact":
+                util = 0
+                for agent in v:
+                    util = util + agent.current_social_status
+                self.data[k][i] = util
+
             else:
                 util = 0
                 for agent in v:

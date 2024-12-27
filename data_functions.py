@@ -15,19 +15,20 @@ def get_all_utils_per_measure(dcops,amount_iterations):
     return ans
 
 
-def add_avg_per_agent(cumulative_measures, amount_of_agents_dict):
+def add_avg_per_agent(cumulative_measures, ):
     ans = {}
     for k,v in cumulative_measures.items():
-        amount_of_agent = amount_of_agents_dict[k]
+        #amount_of_agent = amount_of_agents_dict[k]
         new_key_name = "Average Per Agent "+ k
         ans[new_key_name] = {}
         for iteration, list_of_utils in v.items():
             list_of_avgs = []
             for util in list_of_utils:
-                if amount_of_agent !=0:
-                    list_of_avgs.append(util/amount_of_agent)
-                else:
-                    list_of_avgs.append(0)
+                print()
+                #if amount_of_agent !=0:
+                #    list_of_avgs.append(util/amount_of_agent)
+                #else:
+                #    list_of_avgs.append(0)
 
             ans[new_key_name][iteration] = list_of_avgs
     return ans

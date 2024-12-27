@@ -35,8 +35,52 @@ class Agent:
         self.totalIterations = 1000
 
         self.is_special = False
+        self.prev_assignment = -1
+        self.current_social_status = 0
+        self.cum_social_status = 0
+
+        self.prev_assignment_neighbors = {}
+
     # __________________________________________________________________initiate:
     # neighbours - { key: id, value: neighbour}
+
+
+    def save_prev_assignment(self):
+        self.prev_assignment = self.assignment
+        self.prev_assignment_neighbors = {}
+        for n in self.neighbours.keys():
+            if n in self.LocalView.keys():
+                self.prev_assignment_neighbors[n] = self.LocalView[n]
+            else:
+                self.prev_assignment_neighbors[n] = None
+
+
+
+    def update_social_score(self):
+        if self.prev_assignment != self.assignment:
+            total_diff = 0
+            for n_id, n_obj in self.neighbours.items():
+                social_prev_status = self.get_social_prev_status(n_id, n_obj)
+                current_prev_status = self.get_social_current_status(n_id, n_obj)
+                total_diff = total_diff + (social_prev_status-current_prev_status)
+
+            self.current_social_status = total_diff
+            self.cum_social_status = self.cum_social_status+total_diff
+        else:
+            self.current_social_status = 0
+
+
+    def get_social_prev_status(self,n_id, n_obj):
+        current_n_value_in_local_view = self.LocalView[n_id]
+        cost = n_obj.constraints[self.id][current_n_value_in_local_view][self.prev_assignment]
+        return cost
+
+    def get_social_current_status(self,n_id, n_obj):
+        current_n_value_in_local_view = self.LocalView[n_id]
+        cost = n_obj.constraints[self.id][current_n_value_in_local_view][self.assignment]
+        return cost
+
+
 
     def meet_neighbour(self,neighbour_object,constraint_matrix):
         self.neighbours[neighbour_object.id]=neighbour_object
@@ -208,6 +252,8 @@ class Agent:
     def __str__(self):
         s = "agent ID: " + str(self.id) + ", utility: " + str(self.utility)
         return s
+
+
 
 
 class AltruistAgent(Agent):
