@@ -38,8 +38,8 @@ def calculate_data(dcops,amount_iterations,static_data,file_name):
 if __name__ == '__main__':
 
 
-    amount_reps = 5
-    amount_iterations = 10
+    amount_reps = 100
+    amount_iterations = 1000
     numAgents = 50
     domainSize = 10
     densities = [0.2,0.7]
