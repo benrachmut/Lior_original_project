@@ -52,7 +52,7 @@ if __name__ == '__main__':
         for environment in environments:
             for special_agent_type in specials:
                 for special_agent_amount in specials_amount:
-
+                    print("density:",density,"_environment:",environment,"_special_agent_type:",special_agent_type)
                     dcops = create_dcops(amount_iterations,numAgents,domainSize,density,environment,special_agent_type,special_agent_amount)
                     for dcop in dcops:
                         dcop.agents_dict_by_role["Environment Agents Utility"] = dcop.connected_to_special_id_dict.values()
