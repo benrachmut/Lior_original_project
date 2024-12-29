@@ -192,13 +192,13 @@ class DCOP:
             elif k == "Cumulative Environment Impact":
                 util = 0
                 for agent in v:
-                    util = util + agent.cum_social_status
+                    util = util + agent.cum_social_status/len(self.agents_dict_by_role["Cumulative Environment Impact"])
                 self.data[k][i] = util
 
             elif k == "Current Environment Impact":
                 util = 0
                 for agent in v:
-                    util = util + agent.current_social_status
+                    util = util + agent.current_social_status/len(self.agents_dict_by_role["Current Environment Impact"])
                 self.data[k][i] = util
 
             else:
