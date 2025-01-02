@@ -60,8 +60,8 @@ class Agent:
         if self.prev_assignment != self.assignment:
             total_diff = 0
             for n_id, n_obj in self.neighbours.items():
-                social_prev_status = self.get_social_prev_status(n_id, n_obj)
-                current_prev_status = self.get_social_current_status(n_id, n_obj)
+                social_prev_status = self.get_social_prev_status(n_obj)
+                current_prev_status = self.get_social_current_status(n_obj)
                 total_diff = total_diff + (social_prev_status-current_prev_status)
 
             self.current_social_status = total_diff
@@ -70,14 +70,14 @@ class Agent:
             self.current_social_status = 0
 
 
-    def get_social_prev_status(self,n_id, n_obj):
-        current_n_value_in_local_view = self.LocalView[n_id]
-        cost = n_obj.constraints[self.id][current_n_value_in_local_view][self.prev_assignment]
+    def get_social_prev_status(self, n_obj):
+        current_n_assignmnet = n_obj.assignment
+        cost = n_obj.constraints[self.id][current_n_assignmnet][self.prev_assignment]
         return cost
 
-    def get_social_current_status(self,n_id, n_obj):
-        current_n_value_in_local_view = self.LocalView[n_id]
-        cost = n_obj.constraints[self.id][current_n_value_in_local_view][self.assignment]
+    def get_social_current_status(self, n_obj):
+        current_n_assignmnet = n_obj.assignment
+        cost = n_obj.constraints[self.id][current_n_assignmnet][self.assignment]
         return cost
 
 

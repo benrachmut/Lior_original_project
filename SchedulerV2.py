@@ -38,13 +38,13 @@ def calculate_data(dcops,amount_iterations,static_data,file_name):
 if __name__ == '__main__':
 
 
-    amount_reps = 100
-    amount_iterations = 1000
+    amount_reps = 10#100
+    amount_iterations = 10#1000
     numAgents = 50
     domainSize = 10
     densities = [0.2,0.7]
-    environments = list(AgentEnvironment)
-    specials = list(AgentSpecial)
+    environments = [AgentEnvironment.Egoistic]#list(AgentEnvironment)
+    specials = [AgentSpecial.Altruist]#list(AgentSpecial)
     specials_amount = [1]
 
     # amount_of_agents_dict= {"Global Utility": numAgents,"Unique Agents Utility": None,"Environment Agents Utility": None,"Cumulative Environment Impact":None}
